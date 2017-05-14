@@ -12,12 +12,13 @@
 <?php
     require_once('appvars.php');
     require_once('connectvars.php');
+    session_start();
 
     // Создание панели навигации
-    if (isset($_COOKIE['username'])) {
+    if (isset($_SESSION['username'])) {
         echo '&#10084; <a href="viewprofile.php">View Profile</a><br />';
         echo '&#10084; <a href="editprofile.php">Edit Profile</a><br />';
-        echo '&#10084; <a href="logout.php">Выход из приложения (' . $_COOKIE['username'] . ')</a>';
+        echo '&#10084; <a href="logout.php">Выход из приложения (' . $_SESSION['username'] . ')</a>';
     } else {
         echo '&#10084; <a href="login.php">Вход в приложение</a><br />';
         echo '&#10084; <a href="signup.php">Создание учетной записи</a><br />';
@@ -29,19 +30,25 @@
     $query = "SELECT user_id, first_name, picture FROM mismatch_user WHERE first_name IS NOT NULL ORDER BY join_date DESC LIMIT 5";
     $data = mysqli_query($dbc, $query);
 
-    // Loop through the array of user data, formatting it as HTML
-    echo '<h4>Latest members:</h4>';
+    // Прохождения массива пользователей. Форматирование в HTML
+    echo '<h4>Новые пользователи:</h4>';
     echo '<table>';
     while ($row = mysqli_fetch_array($data)) {
-    if (is_file(MM_UPLOADPATH . $row['picture']) && filesize(MM_UPLOADPATH . $row['picture']) > 0) {
-      echo '<tr><td><img src="' . MM_UPLOADPATH . $row['picture'] . '" alt="' . $row['first_name'] . '" /></td>';
-    }
-    else {
-      echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
-    }
-    echo '<td>' . $row['first_name'] . '</td></tr>';
+        if (is_file(MM_UPLOADPATH . $row['picture']) && filesize(MM_UPLOADPATH . $row['picture']) > 0) {
+            echo '<tr><td><img src="' . MM_UPLOADPATH . $row['picture'] . '" alt="' . $row['first_name'] . '" /></td>';
+        } else {
+            echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
+        }
+        
+       //Если осуществлен вход в приложение, то показываются ссылки на профили
+       if (isset($_SESSION['user_id'])) {
+            echo '<td><a href="viewprofile.php?user_id="' . $row['user_id'] . '">' . $row['first_name'] . '</a></td></tr>';
+        } else {
+            echo '<td>' . $row['first_name'] . '</td></tr>';
+        }
     }
     echo '</table>';
+    phpinfo(32);
 
     mysqli_close($dbc);
 ?>

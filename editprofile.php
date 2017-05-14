@@ -1,3 +1,18 @@
+<?php
+//Проверка, вошел ли пользователь в приложение, прежде чем двигаться дальше
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    echo '<p class="login">Пожалуйста, <a href="login.php">войдите в приложение</a>' . 
+    'для получения доступа к этой странице.';
+    exit();
+} else {
+    echo ('<p class="login">Вы вошли в приложение как ' . $_SESSION['username'] . 
+        '. <a href="logout.php">Выход из приложения</a>.</p>');
+}
+?>
+
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
@@ -66,10 +81,10 @@ if (isset($_POST['submit'])) {
         // Если добавлено новое фото, обновляем только колонку с фотографией
             if (!empty($new_picture)) {
                 $query = "UPDATE mismatch_user SET first_name = '$first_name', last_name = '$last_name', gender = '$gender', " .
-                " birthdate = '$birthdate', city = '$city', state = '$state', picture = '$new_picture' WHERE user_id = '" . $_COOKIE['user_id'] . "'";
+                " birthdate = '$birthdate', city = '$city', state = '$state', picture = '$new_picture' WHERE user_id = '" . $_SESSION['user_id'] . "'";
             } else {
                 $query = "UPDATE mismatch_user SET first_name = '$first_name', last_name = '$last_name', gender = '$gender', " .
-                " birthdate = '$birthdate', city = '$city', state = '$state' WHERE user_id = '" . $_COOKIE['user_id'] . "'";
+                " birthdate = '$birthdate', city = '$city', state = '$state' WHERE user_id = '" . $_SESSION['user_id'] . "'";
             }
             mysqli_query($dbc, $query);
 
@@ -79,12 +94,12 @@ if (isset($_POST['submit'])) {
             mysqli_close($dbc);
             exit();
         } else {
-            echo '<p class="error">Вы должны ввести все данные (фотографию не обязателььно).</p>';
+            echo '<p class="error">Вы должны ввести все данные (фотографию не обязательно).</p>';
         }
     }
 } else {
     // Выгружаем содержимое профиля из базы данных
-    $query = "SELECT first_name, last_name, gender, birthdate, city, state, picture FROM mismatch_user WHERE user_id = '" . $_COOKIE['user_id'] . "'";
+    $query = "SELECT first_name, last_name, gender, birthdate, city, state, picture FROM mismatch_user WHERE user_id = '" . $_SESSION['user_id'] . "'";
     $data = mysqli_query($dbc, $query);
     $row = mysqli_fetch_array($data);
 
