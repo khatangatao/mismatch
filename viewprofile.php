@@ -1,14 +1,13 @@
 <?php
-//Проверка, вошел ли пользователь в приложение, прежде чем двигаться дальше
-session_start();
-if (!isset($_SESSION['user_id'])) {
-    echo '<p class="login">Пожалуйста, <a href="login.php>войдите в приложение</a>' . 
-    'для получения доступа к этой странице.';
-    exit();
-} else {
-    echo ('<p class="login">Вы вошли в приложение как ' . $_SESSION['username'] . 
-        '. <a href="logout.php">Выход из приложения</a>.</p>');
-}
+  session_start();
+
+  // Если переменные сессии пустые, пытаемся их заполнить содержимым куки
+  if (!isset($_SESSION['user_id'])) {
+    if (isset($_COOKIE['user_id']) && isset($_COOKIE['username'])) {
+      $_SESSION['user_id'] = $_COOKIE['user_id'];
+      $_SESSION['username'] = $_COOKIE['username'];
+    }
+  }
 ?>
 
 
@@ -26,6 +25,17 @@ if (!isset($_SESSION['user_id'])) {
     <?php
     require_once('appvars.php');
     require_once('connectvars.php');
+
+    //Проверка, вошел ли пользователь в приложение, прежде чем двигаться дальше
+    if (!isset($_SESSION['user_id'])) {
+    echo '<p class="login">Пожалуйста, <a href="login.php">войдите в приложение</a>' . 
+    ' для получения доступа к этой странице.';
+    exit();
+    } else {
+        echo ('<p class="login">Вы вошли в приложение как ' . $_SESSION['username'] . 
+            '. <a href="logout.php">Выход из приложения</a>.</p>');
+    }
+
 
     // подключение к БД
     $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
