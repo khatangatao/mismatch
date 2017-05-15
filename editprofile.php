@@ -1,29 +1,16 @@
 <?php
-  session_start();
+//Открытие сессии
+require_once('startsession.php');
 
-  // Если переменные сессии пустые, пытаемся их заполнить содержимым куки
-  if (!isset($_SESSION['user_id'])) {
-    if (isset($_COOKIE['user_id']) && isset($_COOKIE['username'])) {
-      $_SESSION['user_id'] = $_COOKIE['user_id'];
-      $_SESSION['username'] = $_COOKIE['username'];
-    }
-  }
-?>
+//Вывод заголовка страницы
+$page_title = 'Редактирование профиля';
+require_once('header.php');
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Несоответствия - Редиктировать профиль</title>
-  <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
-  <h3>Несоответствия - Редиктировать профиль</h3>
-
-<?php
 require_once('appvars.php');
 require_once('connectvars.php');
+
+//Вывод навигационного меню
+require_once('navmenu.php');
 
 //Проверка, вошел ли пользователь в приложение, прежде чем двигаться дальше
 if (!isset($_SESSION['user_id'])) {
@@ -154,5 +141,8 @@ mysqli_close($dbc);
     </fieldset>
     <input type="submit" value="Сохранить" name="submit" />
   </form>
-</body> 
-</html>
+
+<?php
+//Вывод нижнего колонтитула
+require_once('footer.php');
+?>

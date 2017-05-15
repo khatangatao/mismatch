@@ -1,68 +1,48 @@
 <?php
-  session_start();
+//Открытие сессии
+require_once('startsession.php');
 
-  // Если переменные сессии пустые, пытаемся их заполнить содержимым куки
-  if (!isset($_SESSION['user_id'])) {
-    if (isset($_COOKIE['user_id']) && isset($_COOKIE['username'])) {
-      $_SESSION['user_id'] = $_COOKIE['user_id'];
-      $_SESSION['username'] = $_COOKIE['username'];
+//Вывод заголовка страницы
+$page_title = 'Там, где противоположности сходятся!';
+require_once('header.php');
+
+
+require_once('appvars.php');
+require_once('connectvars.php');
+
+//Вывод навигационного меню
+require_once('navmenu.php');
+
+// Соединение с БД
+$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME); 
+
+// Запрос пользовательских данных
+$query = "SELECT user_id, first_name, picture FROM mismatch_user WHERE first_name IS NOT NULL ORDER BY join_date DESC LIMIT 5";
+$data = mysqli_query($dbc, $query);
+
+// Прохождения массива пользователей. Форматирование в HTML
+echo '<h4>Новые пользователи:</h4>';
+echo '<table>';
+while ($row = mysqli_fetch_array($data)) {
+    if (is_file(MM_UPLOADPATH . $row['picture']) && filesize(MM_UPLOADPATH . $row['picture']) > 0) {
+        echo '<tr><td><img src="' . MM_UPLOADPATH . $row['picture'] . '" alt="' . $row['first_name'] . '" /></td>';
+    } else {
+        echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
     }
-  }
-?>
+    
+   //Если осуществлен вход в приложение, то показываются ссылки на профили
+   if (isset($_SESSION['user_id'])) {
+        echo '<td><a href="viewprofile.php?user_id="' . $row['user_id'] . '">' . $row['first_name'] . '</a></td></tr>';
+    } else {
+        echo '<td>' . $row['first_name'] . '</td></tr>';
+    }
+}
+echo '</table>';
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//RU"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Несоответствие! Противоположности притягиваются!</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
-</head>
-<body>
-  <h3>Несоответствие! Противоположности притягиваются!</h3>
+mysqli_close($dbc);
+?>
 
 <?php
-    require_once('appvars.php');
-    require_once('connectvars.php');
-
-    // Создание панели навигации
-    if (isset($_SESSION['username'])) {
-        echo '&#10084; <a href="viewprofile.php">View Profile</a><br />';
-        echo '&#10084; <a href="editprofile.php">Edit Profile</a><br />';
-        echo '&#10084; <a href="logout.php">Выход из приложения (' . $_SESSION['username'] . ')</a>';
-    } else {
-        echo '&#10084; <a href="login.php">Вход в приложение</a><br />';
-        echo '&#10084; <a href="signup.php">Создание учетной записи</a><br />';
-    }
-    // Соединение с БД
-    $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME); 
-
-    // Запрос пользовательских данных
-    $query = "SELECT user_id, first_name, picture FROM mismatch_user WHERE first_name IS NOT NULL ORDER BY join_date DESC LIMIT 5";
-    $data = mysqli_query($dbc, $query);
-
-    // Прохождения массива пользователей. Форматирование в HTML
-    echo '<h4>Новые пользователи:</h4>';
-    echo '<table>';
-    while ($row = mysqli_fetch_array($data)) {
-        if (is_file(MM_UPLOADPATH . $row['picture']) && filesize(MM_UPLOADPATH . $row['picture']) > 0) {
-            echo '<tr><td><img src="' . MM_UPLOADPATH . $row['picture'] . '" alt="' . $row['first_name'] . '" /></td>';
-        } else {
-            echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
-        }
-        
-       //Если осуществлен вход в приложение, то показываются ссылки на профили
-       if (isset($_SESSION['user_id'])) {
-            echo '<td><a href="viewprofile.php?user_id="' . $row['user_id'] . '">' . $row['first_name'] . '</a></td></tr>';
-        } else {
-            echo '<td>' . $row['first_name'] . '</td></tr>';
-        }
-    }
-    echo '</table>';
-    phpinfo(32);
-
-    mysqli_close($dbc);
+//Вывод нижнего колонтитула
+require_once('footer.php');
 ?>
-
-</body> 
-</html>
