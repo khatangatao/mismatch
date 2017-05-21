@@ -30,9 +30,10 @@ while ($row = mysqli_fetch_array($data)) {
         echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
     }
     
-   //Если осуществлен вход в приложение, то показываются ссылки на профили
-   if (isset($_SESSION['user_id'])) {
-        echo '<td><a href="viewprofile.php?user_id="' . $row['user_id'] . '">' . $row['first_name'] . '</a></td></tr>';
+    //Если осуществлен вход в приложение, то показываются ссылки на профили
+        //
+    if (isset($_SESSION['user_id'])) {
+        echo '<td><a href="viewprofile.php?user_id=' . $row['user_id']. '">' . $row['first_name'] . '</a></td></tr>';
     } else {
         echo '<td>' . $row['first_name'] . '</td></tr>';
     }
