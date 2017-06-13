@@ -93,4 +93,4 @@ echo '</form>';
 
 //Вывод нижнего колонтитула
 require_once('footer.php');
-?>
+

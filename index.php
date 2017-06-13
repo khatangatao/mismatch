@@ -1,4 +1,5 @@
 <?php
+
 //Открытие сессии
 require_once('startsession.php');
 
@@ -14,7 +15,7 @@ require_once('connectvars.php');
 require_once('navmenu.php');
 
 // Соединение с БД
-$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME); 
+$dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
 
 // Запрос пользовательских данных
 $query = "SELECT user_id, first_name, picture FROM mismatch_user WHERE first_name IS NOT NULL ORDER BY join_date DESC LIMIT 5";
@@ -29,11 +30,11 @@ while ($row = mysqli_fetch_array($data)) {
     } else {
         echo '<tr><td><img src="' . MM_UPLOADPATH . 'nopic.jpg' . '" alt="' . $row['first_name'] . '" /></td>';
     }
-    
+
     //Если осуществлен вход в приложение, то показываются ссылки на профили
-        //
+    //
     if (isset($_SESSION['user_id'])) {
-        echo '<td><a href="viewprofile.php?user_id=' . $row['user_id']. '">' . $row['first_name'] . '</a></td></tr>';
+        echo '<td><a href="viewprofile.php?user_id=' . $row['user_id'] . '">' . $row['first_name'] . '</a></td></tr>';
     } else {
         echo '<td>' . $row['first_name'] . '</td></tr>';
     }
@@ -44,6 +45,6 @@ mysqli_close($dbc);
 ?>
 
 <?php
+
 //Вывод нижнего колонтитула
 require_once('footer.php');
-?>
